@@ -1,0 +1,2318 @@
+﻿<UserControl x:Class="ProcessYieldOptimizer.Controls.ScenarioDetailsControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:converters="clr-namespace:ProcessYieldOptimizer.Converters"
+             mc:Ignorable="d" 
+             d:DesignHeight="400" d:DesignWidth="400">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <converters:BooleanToVisibilityConverter x:Key="booleanToVisibilityConverter" />
+            <converters:ScenarioDetailsEnabledConverter x:Key="scenarioDetailsEnabledConverter" />
+            <converters:ScenarioDetailsVisibilityConverter x:Key="scenarioDetailsVisibilityConverter" />
+            <converters:ShowActualToggleTextConverter x:Key="showActualToggleTextConverter"/>
+            <converters:ForeGroundTextColorConverter x:Key="foreGroundTextColorConverter" />
+            <converters:VisualizeButtonTextConverter x:Key="visualizeButtonTextConverter" />
+            <converters:ColumnValueFormatConverter x:Key="columnValueFormatConverter"/>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Assets/Shapes.xaml" />
+                <ResourceDictionary Source="../Assets/ButtonStyles.xaml" />
+                <ResourceDictionary Source="../Assets/ContainerStyles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid>
+        <!--In future can add changes to tabstyle to make tabs consistent and unique everywhere-->
+        <TabControl TabStripPlacement="Bottom" Visibility="{Binding MyScenarios.SelectedScenario, Converter={StaticResource scenarioDetailsVisibilityConverter}}" Background="White" SelectedIndex="{Binding MyScenarios.SelectedScenario.SelectedTabIndex}" IsEnabled="{Binding MyScenarios.SelectedScenario, Converter={StaticResource scenarioDetailsEnabledConverter}}">
+            <TabItem Header="{Binding MyScenarios.SelectedScenario.MainTab.HeaderText, UpdateSourceTrigger=PropertyChanged}" Padding="4,8" Style="{StaticResource FlatTabStyle}" Visibility="{Binding MyScenarios.SelectedScenario.MainTab.TabVisibility, Converter={StaticResource booleanToVisibilityConverter}}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="25"></RowDefinition>
+                        <RowDefinition Height="300*"></RowDefinition>
+                        <RowDefinition Height="25"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="3*"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="5"/>
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+                        <Button Grid.Column="1" Content="Add Row" Margin="0,0,0,2" Command="{Binding AddDataDetailCommand}"/>
+                        <Button Grid.Column="3" Content="Delete Row" Margin="0,0,0,2" Command="{Binding RemoveDataDetailCommand}"/>
+                    </Grid>
+                    <!-- Sorting columns can throw off mapping best copy onto excel if need to sort, visualization and mapping is key for now can enable it later -->
+                    <DataGrid Grid.Row="1" CanUserSortColumns="False" ItemsSource="{Binding MyScenarios.SelectedScenario.MainTab.DataSet}" AutoGenerateColumns="False" SelectedIndex="{Binding MyScenarios.SelectedScenario.MainTab.SelectedRowIndex}" SelectionMode="Single">
+                        <DataGrid.RowHeaderStyle>
+                            <Style TargetType="{x:Type DataGridRowHeader}">
+                                <Setter Property="Content" Value="{Binding Path=Index}" />
+                            </Style>
+                        </DataGrid.RowHeaderStyle>
+                        <DataGrid.Columns>
+                            <!--User cant edit these values...only calculatable via commands-->
+                            <DataGridTextColumn Header="A" Binding="{Binding Path=Column1}" IsReadOnly="False" MinWidth="20" Width="*">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column1Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="B" Binding="{Binding Path=Column2}" IsReadOnly="False" MinWidth="20" Width="*">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column2Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="D" Binding="{Binding Path=Column3}" IsReadOnly="False" MinWidth="20" Width="*">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column3Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="E" Binding="{Binding Path=Column4}" IsReadOnly="False" MinWidth="20" Width="*">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column4Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="F" Binding="{Binding Path=Column5}" IsReadOnly="False" MinWidth="20" Width="*">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column5Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="G" Binding="{Binding Path=Column6}" IsReadOnly="False" MinWidth="20" Width="*">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column6Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="H" Binding="{Binding Path=Column7}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column7Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="I" Binding="{Binding Path=Column8}" IsReadOnly="False" MinWidth="20" Width="*">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column8Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="J" Binding="{Binding Path=Column9}" IsReadOnly="False" MinWidth="20" Width="*">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column9Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="K" Binding="{Binding Path=Column10}" IsReadOnly="False" MinWidth="20" Width="*">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column10Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Grid Grid.Column="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" Content="Paste All" Command="{Binding PasteAllCommand}" VerticalAlignment="Bottom" Margin="5,0,0,0" Padding="10,2"></Button>
+                            <Button Grid.Column="1" Content="Copy All" Command="{Binding CopyAllCommand}" VerticalAlignment="Bottom" Margin="5,0,0,0" Padding="10,2"></Button>
+                        </Grid>
+                        <Grid Grid.Column="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" Content="Paste Row" Command="{Binding PasteCommand}" VerticalAlignment="Bottom" Margin="5,0,0,0" Padding="10,2"></Button>
+                            <Button Grid.Column="1" Content="Copy Row" Command="{Binding CopyCommand}" VerticalAlignment="Bottom" Margin="5,0,0,0" Padding="10,2"></Button>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="{Binding MyScenarios.SelectedScenario.PerformanceIndicator1.HeaderText,  UpdateSourceTrigger=PropertyChanged}" Padding="4,8" Style="{StaticResource FlatTabStyle}" Visibility="{Binding MyScenarios.SelectedScenario.PerformanceIndicator1.TabVisibility, Converter={StaticResource booleanToVisibilityConverter}}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="25"></RowDefinition>
+                        <RowDefinition Height="300*"></RowDefinition>
+                        <RowDefinition Height="25"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="3*"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="5"/>
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+                        <Button Grid.Column="1" Content="Add Row" Margin="0,0,0,2" Command="{Binding AddDataDetailCommand}"/>
+                        <Button Grid.Column="3" Content="Delete Row" Margin="0,0,0,2" Command="{Binding RemoveDataDetailCommand}"/>
+                    </Grid>
+                    <DataGrid Grid.Row="1" CanUserSortColumns="False" ItemsSource="{Binding MyScenarios.SelectedScenario.PerformanceIndicator1.DataSet}" AutoGenerateColumns="False" SelectedIndex="{Binding MyScenarios.SelectedScenario.PerformanceIndicator1.SelectedRowIndex}" SelectionMode="Single">
+                        <DataGrid.RowHeaderStyle>
+                            <Style TargetType="{x:Type DataGridRowHeader}">
+                                <Setter Property="Content" Value="{Binding Path=Index}" />
+                            </Style>
+                        </DataGrid.RowHeaderStyle>
+                        <DataGrid.Columns>
+                            <!--User cant edit these values...only calculatable via commands-->
+                            <DataGridTextColumn Header="A" Binding="{Binding Path=Column1}" IsReadOnly="False" MinWidth="20" Width="*">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column1Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="B" Binding="{Binding Path=Column2}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column2Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="D" Binding="{Binding Path=Column3}" IsReadOnly="False" MinWidth="20" Width="*">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column3Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="E" Binding="{Binding Path=Column4}" IsReadOnly="False" MinWidth="20" Width="*">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column4Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="F" Binding="{Binding Path=Column5}" IsReadOnly="False" MinWidth="20" Width="*">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column5Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="G" Binding="{Binding Path=Column6}" IsReadOnly="False" MinWidth="20" Width="*">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column6Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="H" Binding="{Binding Path=Column7}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column7Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="I" Binding="{Binding Path=Column8}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column8Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="J" Binding="{Binding Path=Column9}" IsReadOnly="False" MinWidth="20" Width="*">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column9Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="K" Binding="{Binding Path=Column10}" IsReadOnly="False" MinWidth="20" Width="*">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column10Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Grid Grid.Column="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" Content="Paste All" Command="{Binding PasteAllCommand}" VerticalAlignment="Bottom" Margin="5,0,0,0" Padding="10,2"></Button>
+                            <Button Grid.Column="1" Content="Copy All" Command="{Binding CopyAllCommand}" VerticalAlignment="Bottom" Margin="5,0,0,0" Padding="10,2"></Button>
+                        </Grid>
+                        <Grid Grid.Column="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" Content="Paste Row" Command="{Binding PasteCommand}" VerticalAlignment="Bottom" Margin="5,0,0,0" Padding="10,2"></Button>
+                            <Button Grid.Column="1" Content="Copy Row" Command="{Binding CopyCommand}" VerticalAlignment="Bottom" Margin="5,0,0,0" Padding="10,2"></Button>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="{Binding MyScenarios.SelectedScenario.PerformanceIndicator2.HeaderText,  UpdateSourceTrigger=PropertyChanged}" Padding="4,8" Style="{StaticResource FlatTabStyle}" Visibility="{Binding MyScenarios.SelectedScenario.PerformanceIndicator2.TabVisibility, Converter={StaticResource booleanToVisibilityConverter}}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="25"></RowDefinition>
+                        <RowDefinition Height="300*"></RowDefinition>
+                        <RowDefinition Height="25"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="3*"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="5"/>
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+                        <Button Grid.Column="1" Content="Add Row" Margin="0,0,0,2" Command="{Binding AddDataDetailCommand}"/>
+                        <Button Grid.Column="3" Content="Delete Row" Margin="0,0,0,2" Command="{Binding RemoveDataDetailCommand}"/>
+                    </Grid>
+                    <DataGrid CanUserSortColumns="False" Grid.Row="1" ItemsSource="{Binding MyScenarios.SelectedScenario.PerformanceIndicator2.DataSet}" AutoGenerateColumns="False" SelectedIndex="{Binding MyScenarios.SelectedScenario.PerformanceIndicator2.SelectedRowIndex}" SelectionMode="Single">
+                        <DataGrid.RowHeaderStyle>
+                            <Style TargetType="{x:Type DataGridRowHeader}">
+                                <Setter Property="Content" Value="{Binding Path=Index}" />
+                            </Style>
+                        </DataGrid.RowHeaderStyle>
+                        <DataGrid.Columns>
+                            <!--User cant edit these values...only calculatable via commands-->
+                            <DataGridTextColumn Header="A" Binding="{Binding Path=Column1}" IsReadOnly="False" MinWidth="20" Width="*">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column1Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="B" Binding="{Binding Path=Column2}" IsReadOnly="False" MinWidth="20" Width="*">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column2Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="D" Binding="{Binding Path=Column3}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column3Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="E" Binding="{Binding Path=Column4}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column4Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="F" Binding="{Binding Path=Column5}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column5Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="G" Binding="{Binding Path=Column6}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column6Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="H" Binding="{Binding Path=Column7}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column7Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="I" Binding="{Binding Path=Column8}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column8Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="J" Binding="{Binding Path=Column9}" IsReadOnly="False" MinWidth="20" Width="*">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column9Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="K" Binding="{Binding Path=Column10}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column10Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Grid Grid.Column="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" Content="Paste All" Command="{Binding PasteAllCommand}" VerticalAlignment="Bottom" Margin="5,0,0,0" Padding="10,2"></Button>
+                            <Button Grid.Column="1" Content="Copy All" Command="{Binding CopyAllCommand}" VerticalAlignment="Bottom" Margin="5,0,0,0" Padding="10,2"></Button>
+                        </Grid>
+                        <Grid Grid.Column="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" Content="Paste Row" Command="{Binding PasteCommand}" VerticalAlignment="Bottom" Margin="5,0,0,0" Padding="10,2"></Button>
+                            <Button Grid.Column="1" Content="Copy Row" Command="{Binding CopyCommand}" VerticalAlignment="Bottom" Margin="5,0,0,0" Padding="10,2"></Button>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="{Binding MyScenarios.SelectedScenario.PerformanceIndicator3.HeaderText,  UpdateSourceTrigger=PropertyChanged}" Padding="4,8" Style="{StaticResource FlatTabStyle}" Visibility="{Binding MyScenarios.SelectedScenario.PerformanceIndicator3.TabVisibility, Converter={StaticResource booleanToVisibilityConverter}}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="25"></RowDefinition>
+                        <RowDefinition Height="300*"></RowDefinition>
+                        <RowDefinition Height="25"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="3*"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="5"/>
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+                        <Button Grid.Column="1" Content="Add Row" Margin="0,0,0,2" Command="{Binding AddDataDetailCommand}"/>
+                        <Button Grid.Column="3" Content="Delete Row" Margin="0,0,0,2" Command="{Binding RemoveDataDetailCommand}"/>
+                    </Grid>
+                    <DataGrid CanUserSortColumns="False" Grid.Row="1" ItemsSource="{Binding MyScenarios.SelectedScenario.PerformanceIndicator3.DataSet}" AutoGenerateColumns="False" SelectedIndex="{Binding MyScenarios.SelectedScenario.PerformanceIndicator3.SelectedRowIndex}" SelectionMode="Single">
+                        <DataGrid.RowHeaderStyle>
+                            <Style TargetType="{x:Type DataGridRowHeader}">
+                                <Setter Property="Content" Value="{Binding Path=Index}" />
+                            </Style>
+                        </DataGrid.RowHeaderStyle>
+                        <DataGrid.Columns>
+                            <!--User cant edit these values...only calculatable via commands-->
+                            <DataGridTextColumn Header="A" Binding="{Binding Path=Column1}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column1Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="B" Binding="{Binding Path=Column2}" IsReadOnly="False" MinWidth="20" Width="*">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column2Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="D" Binding="{Binding Path=Column3}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column3Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="E" Binding="{Binding Path=Column4}" IsReadOnly="False" MinWidth="20" Width="*">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column4Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="F" Binding="{Binding Path=Column5}" IsReadOnly="False" MinWidth="20" Width="*">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column5Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="G" Binding="{Binding Path=Column6}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column6Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="H" Binding="{Binding Path=Column7}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column7Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="I" Binding="{Binding Path=Column8}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column8Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="J" Binding="{Binding Path=Column9}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column9Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="K" Binding="{Binding Path=Column10}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column10Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Grid Grid.Column="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" Content="Paste All" Command="{Binding PasteAllCommand}" VerticalAlignment="Bottom" Margin="5,0,0,0" Padding="10,2"></Button>
+                            <Button Grid.Column="1" Content="Copy All" Command="{Binding CopyAllCommand}" VerticalAlignment="Bottom" Margin="5,0,0,0" Padding="10,2"></Button>
+                        </Grid>
+                        <Grid Grid.Column="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" Content="Paste Row" Command="{Binding PasteCommand}" VerticalAlignment="Bottom" Margin="5,0,0,0" Padding="10,2"></Button>
+                            <Button Grid.Column="1" Content="Copy Row" Command="{Binding CopyCommand}" VerticalAlignment="Bottom" Margin="5,0,0,0" Padding="10,2"></Button>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="{Binding MyScenarios.SelectedScenario.PerformanceIndicator4.HeaderText,  UpdateSourceTrigger=PropertyChanged}" Padding="4,8" Style="{StaticResource FlatTabStyle}" Visibility="{Binding MyScenarios.SelectedScenario.PerformanceIndicator4.TabVisibility, Converter={StaticResource booleanToVisibilityConverter}}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="25"></RowDefinition>
+                        <RowDefinition Height="300*"></RowDefinition>
+                        <RowDefinition Height="25"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="3*"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="5"/>
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+                        <Button Grid.Column="1" Content="Add Row" Margin="0,0,0,2" Command="{Binding AddDataDetailCommand}"/>
+                        <Button Grid.Column="3" Content="Delete Row" Margin="0,0,0,2" Command="{Binding RemoveDataDetailCommand}"/>
+                    </Grid>
+                    <DataGrid CanUserSortColumns="False" Grid.Row="1" ItemsSource="{Binding MyScenarios.SelectedScenario.PerformanceIndicator4.DataSet}" AutoGenerateColumns="False" SelectedIndex="{Binding MyScenarios.SelectedScenario.PerformanceIndicator4.SelectedRowIndex}" SelectionMode="Single">
+                        <DataGrid.RowHeaderStyle>
+                            <Style TargetType="{x:Type DataGridRowHeader}">
+                                <Setter Property="Content" Value="{Binding Path=Index}" />
+                            </Style>
+                        </DataGrid.RowHeaderStyle>
+                        <DataGrid.Columns>
+                            <!--User cant edit these values...only calculatable via commands-->
+                            <DataGridTextColumn Header="A" Binding="{Binding Path=Column1}" IsReadOnly="False" MinWidth="20" Width="*">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column1Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="B" Binding="{Binding Path=Column2}" IsReadOnly="False" MinWidth="20" Width="*">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column2Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="D" Binding="{Binding Path=Column3}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column3Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="E" Binding="{Binding Path=Column4}" IsReadOnly="False" MinWidth="20" Width="*">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column4Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="F" Binding="{Binding Path=Column5}" IsReadOnly="False" MinWidth="20" Width="*">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column5Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="G" Binding="{Binding Path=Column6}" IsReadOnly="False" MinWidth="20" Width="*">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column6Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="H" Binding="{Binding Path=Column7}" IsReadOnly="False" MinWidth="20" Width="*">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column7Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="I" Binding="{Binding Path=Column8}" IsReadOnly="False" MinWidth="20" Width="*">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column8Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="J" Binding="{Binding Path=Column9}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column9Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="K" Binding="{Binding Path=Column10}" IsReadOnly="False" MinWidth="20" Width="*">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column10Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Grid Grid.Column="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" Content="Paste All" Command="{Binding PasteAllCommand}" VerticalAlignment="Bottom" Margin="5,0,0,0" Padding="10,2"></Button>
+                            <Button Grid.Column="1" Content="Copy All" Command="{Binding CopyAllCommand}" VerticalAlignment="Bottom" Margin="5,0,0,0" Padding="10,2"></Button>
+                        </Grid>
+                        <Grid Grid.Column="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" Content="Paste Row" Command="{Binding PasteCommand}" VerticalAlignment="Bottom" Margin="5,0,0,0" Padding="10,2"></Button>
+                            <Button Grid.Column="1" Content="Copy Row" Command="{Binding CopyCommand}" VerticalAlignment="Bottom" Margin="5,0,0,0" Padding="10,2"></Button>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="{Binding MyScenarios.SelectedScenario.PerformanceIndicator5.HeaderText,  UpdateSourceTrigger=PropertyChanged}" Padding="4,8" Style="{StaticResource FlatTabStyle}" Visibility="{Binding MyScenarios.SelectedScenario.PerformanceIndicator5.TabVisibility, Converter={StaticResource booleanToVisibilityConverter}}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="25"></RowDefinition>
+                        <RowDefinition Height="300*"></RowDefinition>
+                        <RowDefinition Height="25"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="3*"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="5"/>
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+                        <Button Grid.Column="1" Content="Add Row" Margin="0,0,0,2" Command="{Binding AddDataDetailCommand}"/>
+                        <Button Grid.Column="3" Content="Delete Row" Margin="0,0,0,2" Command="{Binding RemoveDataDetailCommand}"/>
+                    </Grid>
+                    <DataGrid CanUserSortColumns="False" Grid.Row="1" ItemsSource="{Binding MyScenarios.SelectedScenario.PerformanceIndicator5.DataSet}" AutoGenerateColumns="False" SelectedIndex="{Binding MyScenarios.SelectedScenario.PerformanceIndicator5.SelectedRowIndex}" SelectionMode="Single">
+                        <DataGrid.RowHeaderStyle>
+                            <Style TargetType="{x:Type DataGridRowHeader}">
+                                <Setter Property="Content" Value="{Binding Path=Index}" />
+                            </Style>
+                        </DataGrid.RowHeaderStyle>
+                        <DataGrid.Columns>
+                            <!--User cant edit these values...only calculatable via commands-->
+                            <DataGridTextColumn Header="A" Binding="{Binding Path=Column1}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column1Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="B" Binding="{Binding Path=Column2}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column2Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="D" Binding="{Binding Path=Column3}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column3Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="E" Binding="{Binding Path=Column4}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column4Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="F" Binding="{Binding Path=Column5}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column5Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="G" Binding="{Binding Path=Column6}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column6Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="H" Binding="{Binding Path=Column7}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column7Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="I" Binding="{Binding Path=Column8}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column8Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="J" Binding="{Binding Path=Column9}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column9Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="K" Binding="{Binding Path=Column10}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column10Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Grid Grid.Column="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" Content="Paste All" Command="{Binding PasteAllCommand}" VerticalAlignment="Bottom" Margin="5,0,0,0" Padding="10,2"></Button>
+                            <Button Grid.Column="1" Content="Copy All" Command="{Binding CopyAllCommand}" VerticalAlignment="Bottom" Margin="5,0,0,0" Padding="10,2"></Button>
+                        </Grid>
+                        <Grid Grid.Column="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" Content="Paste Row" Command="{Binding PasteCommand}" VerticalAlignment="Bottom" Margin="5,0,0,0" Padding="10,2"></Button>
+                            <Button Grid.Column="1" Content="Copy Row" Command="{Binding CopyCommand}" VerticalAlignment="Bottom" Margin="5,0,0,0" Padding="10,2"></Button>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="{Binding MyScenarios.SelectedScenario.PerformanceIndicator6.HeaderText,  UpdateSourceTrigger=PropertyChanged}" Padding="4,8" Style="{StaticResource FlatTabStyle}" Visibility="{Binding MyScenarios.SelectedScenario.PerformanceIndicator6.TabVisibility, Converter={StaticResource booleanToVisibilityConverter}}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="25"></RowDefinition>
+                        <RowDefinition Height="300*"></RowDefinition>
+                        <RowDefinition Height="25"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="3*"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="5"/>
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+                        <Button Grid.Column="1" Content="Add Row" Margin="0,0,0,2" Command="{Binding AddDataDetailCommand}"/>
+                        <Button Grid.Column="3" Content="Delete Row" Margin="0,0,0,2" Command="{Binding RemoveDataDetailCommand}"/>
+                    </Grid>
+                    <DataGrid CanUserSortColumns="False" Grid.Row="1" ItemsSource="{Binding MyScenarios.SelectedScenario.PerformanceIndicator6.DataSet}" AutoGenerateColumns="False" SelectedIndex="{Binding MyScenarios.SelectedScenario.PerformanceIndicator6.SelectedRowIndex}" SelectionMode="Single">
+                        <DataGrid.RowHeaderStyle>
+                            <Style TargetType="{x:Type DataGridRowHeader}">
+                                <Setter Property="Content" Value="{Binding Path=Index}" />
+                            </Style>
+                        </DataGrid.RowHeaderStyle>
+                        <DataGrid.Columns>
+                            <!--User cant edit these values...only calculatable via commands-->
+                            <DataGridTextColumn Header="A" Binding="{Binding Path=Column1}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column1Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="B" Binding="{Binding Path=Column2}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column2Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="D" Binding="{Binding Path=Column3}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column3Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="E" Binding="{Binding Path=Column4}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column4Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="F" Binding="{Binding Path=Column5}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column5Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="G" Binding="{Binding Path=Column6}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column6Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="H" Binding="{Binding Path=Column7}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column7Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="I" Binding="{Binding Path=Column8}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column8Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="J" Binding="{Binding Path=Column9}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column9Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="K" Binding="{Binding Path=Column10}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column10Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Grid Grid.Column="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" Content="Paste All" Command="{Binding PasteAllCommand}" VerticalAlignment="Bottom" Margin="5,0,0,0" Padding="10,2"></Button>
+                            <Button Grid.Column="1" Content="Copy All" Command="{Binding CopyAllCommand}" VerticalAlignment="Bottom" Margin="5,0,0,0" Padding="10,2"></Button>
+                        </Grid>
+                        <Grid Grid.Column="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" Content="Paste Row" Command="{Binding PasteCommand}" VerticalAlignment="Bottom" Margin="5,0,0,0" Padding="10,2"></Button>
+                            <Button Grid.Column="1" Content="Copy Row" Command="{Binding CopyCommand}" VerticalAlignment="Bottom" Margin="5,0,0,0" Padding="10,2"></Button>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="{Binding MyScenarios.SelectedScenario.PerformanceIndicator7.HeaderText,  UpdateSourceTrigger=PropertyChanged}" Padding="4,8" Style="{StaticResource FlatTabStyle}" Visibility="{Binding MyScenarios.SelectedScenario.PerformanceIndicator7.TabVisibility, Converter={StaticResource booleanToVisibilityConverter}}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="25"></RowDefinition>
+                        <RowDefinition Height="300*"></RowDefinition>
+                        <RowDefinition Height="25"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="3*"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="5"/>
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+                        <Button Grid.Column="1" Content="Add Row" Margin="0,0,0,2" Command="{Binding AddDataDetailCommand}"/>
+                        <Button Grid.Column="3" Content="Delete Row" Margin="0,0,0,2" Command="{Binding RemoveDataDetailCommand}"/>
+                    </Grid>
+                    <DataGrid CanUserSortColumns="False" Grid.Row="1" ItemsSource="{Binding MyScenarios.SelectedScenario.PerformanceIndicator7.DataSet}" AutoGenerateColumns="False" SelectedIndex="{Binding MyScenarios.SelectedScenario.PerformanceIndicator7.SelectedRowIndex}" SelectionMode="Single">
+                        <DataGrid.RowHeaderStyle>
+                            <Style TargetType="{x:Type DataGridRowHeader}">
+                                <Setter Property="Content" Value="{Binding Path=Index}" />
+                            </Style>
+                        </DataGrid.RowHeaderStyle>
+                        <DataGrid.Columns>
+                            <!--User cant edit these values...only calculatable via commands-->
+                            <DataGridTextColumn Header="A" Binding="{Binding Path=Column1}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column1Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="B" Binding="{Binding Path=Column2}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column2Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="D" Binding="{Binding Path=Column3}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column3Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="E" Binding="{Binding Path=Column4}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column4Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="F" Binding="{Binding Path=Column5}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column5Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="G" Binding="{Binding Path=Column6}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column6Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="H" Binding="{Binding Path=Column7}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column7Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="I" Binding="{Binding Path=Column8}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column8Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="J" Binding="{Binding Path=Column9}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column9Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="K" Binding="{Binding Path=Column10}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column10Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Grid Grid.Column="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" Content="Paste All" Command="{Binding PasteAllCommand}" VerticalAlignment="Bottom" Margin="5,0,0,0" Padding="10,2"></Button>
+                            <Button Grid.Column="1" Content="Copy All" Command="{Binding CopyAllCommand}" VerticalAlignment="Bottom" Margin="5,0,0,0" Padding="10,2"></Button>
+                        </Grid>
+                        <Grid Grid.Column="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" Content="Paste Row" Command="{Binding PasteCommand}" VerticalAlignment="Bottom" Margin="5,0,0,0" Padding="10,2"></Button>
+                            <Button Grid.Column="1" Content="Copy Row" Command="{Binding CopyCommand}" VerticalAlignment="Bottom" Margin="5,0,0,0" Padding="10,2"></Button>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="{Binding MyScenarios.SelectedScenario.PerformanceIndicator8.HeaderText,  UpdateSourceTrigger=PropertyChanged}" Padding="4,8" Style="{StaticResource FlatTabStyle}" Visibility="{Binding MyScenarios.SelectedScenario.PerformanceIndicator8.TabVisibility, Converter={StaticResource booleanToVisibilityConverter}}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="25"></RowDefinition>
+                        <RowDefinition Height="300*"></RowDefinition>
+                        <RowDefinition Height="25"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="3*"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="5"/>
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+                        <Button Grid.Column="1" Content="Add Row" Margin="0,0,0,2" Command="{Binding AddDataDetailCommand}"/>
+                        <Button Grid.Column="3" Content="Delete Row" Margin="0,0,0,2" Command="{Binding RemoveDataDetailCommand}"/>
+                    </Grid>
+                    <DataGrid CanUserSortColumns="False" Grid.Row="1" ItemsSource="{Binding MyScenarios.SelectedScenario.PerformanceIndicator8.DataSet}" AutoGenerateColumns="False" SelectedIndex="{Binding MyScenarios.SelectedScenario.PerformanceIndicator8.SelectedRowIndex}" SelectionMode="Single">
+                        <DataGrid.RowHeaderStyle>
+                            <Style TargetType="{x:Type DataGridRowHeader}">
+                                <Setter Property="Content" Value="{Binding Path=Index}" />
+                            </Style>
+                        </DataGrid.RowHeaderStyle>
+                        <DataGrid.Columns>
+                            <!--User cant edit these values...only calculatable via commands-->
+                            <DataGridTextColumn Header="A" Binding="{Binding Path=Column1}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column1Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="B" Binding="{Binding Path=Column2}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column2Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="D" Binding="{Binding Path=Column3}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column3Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="E" Binding="{Binding Path=Column4}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column4Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="F" Binding="{Binding Path=Column5}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column5Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="G" Binding="{Binding Path=Column6}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column6Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="H" Binding="{Binding Path=Column7}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column7Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="I" Binding="{Binding Path=Column8}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column8Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="J" Binding="{Binding Path=Column9}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column9Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="K" Binding="{Binding Path=Column10}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column10Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Grid Grid.Column="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" Content="Paste All" Command="{Binding PasteAllCommand}" VerticalAlignment="Bottom" Margin="5,0,0,0" Padding="10,2"></Button>
+                            <Button Grid.Column="1" Content="Copy All" Command="{Binding CopyAllCommand}" VerticalAlignment="Bottom" Margin="5,0,0,0" Padding="10,2"></Button>
+                        </Grid>
+                        <Grid Grid.Column="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" Content="Paste Row" Command="{Binding PasteCommand}" VerticalAlignment="Bottom" Margin="5,0,0,0" Padding="10,2"></Button>
+                            <Button Grid.Column="1" Content="Copy Row" Command="{Binding CopyCommand}" VerticalAlignment="Bottom" Margin="5,0,0,0" Padding="10,2"></Button>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="{Binding MyScenarios.SelectedScenario.PerformanceIndicator9.HeaderText,  UpdateSourceTrigger=PropertyChanged}" Padding="4,8" Style="{StaticResource FlatTabStyle}" Visibility="{Binding MyScenarios.SelectedScenario.PerformanceIndicator9.TabVisibility, Converter={StaticResource booleanToVisibilityConverter}}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="25"></RowDefinition>
+                        <RowDefinition Height="300*"></RowDefinition>
+                        <RowDefinition Height="25"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="3*"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="5"/>
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+                        <Button Grid.Column="1" Content="Add Row" Margin="0,0,0,2" Command="{Binding AddDataDetailCommand}"/>
+                        <Button Grid.Column="3" Content="Delete Row" Margin="0,0,0,2" Command="{Binding RemoveDataDetailCommand}"/>
+                    </Grid>
+                    <DataGrid CanUserSortColumns="False" Grid.Row="1" ItemsSource="{Binding MyScenarios.SelectedScenario.PerformanceIndicator9.DataSet}" AutoGenerateColumns="False" SelectedIndex="{Binding MyScenarios.SelectedScenario.PerformanceIndicator9.SelectedRowIndex}" SelectionMode="Single">
+                        <DataGrid.RowHeaderStyle>
+                            <Style TargetType="{x:Type DataGridRowHeader}">
+                                <Setter Property="Content" Value="{Binding Path=Index}" />
+                            </Style>
+                        </DataGrid.RowHeaderStyle>
+                        <DataGrid.Columns>
+                            <!--User cant edit these values...only calculatable via commands-->
+                            <DataGridTextColumn Header="A" Binding="{Binding Path=Column1}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column1Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="B" Binding="{Binding Path=Column2}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column2Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="D" Binding="{Binding Path=Column3}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column3Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="E" Binding="{Binding Path=Column4}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column4Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="F" Binding="{Binding Path=Column5}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column5Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="G" Binding="{Binding Path=Column6}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column6Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="H" Binding="{Binding Path=Column7}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column7Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="I" Binding="{Binding Path=Column8}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column8Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="J" Binding="{Binding Path=Column9}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column9Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="K" Binding="{Binding Path=Column10}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column10Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Grid Grid.Column="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" Content="Paste All" Command="{Binding PasteAllCommand}" VerticalAlignment="Bottom" Margin="5,0,0,0" Padding="10,2"></Button>
+                            <Button Grid.Column="1" Content="Copy All" Command="{Binding CopyAllCommand}" VerticalAlignment="Bottom" Margin="5,0,0,0" Padding="10,2"></Button>
+                        </Grid>
+                        <Grid Grid.Column="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" Content="Paste Row" Command="{Binding PasteCommand}" VerticalAlignment="Bottom" Margin="5,0,0,0" Padding="10,2"></Button>
+                            <Button Grid.Column="1" Content="Copy Row" Command="{Binding CopyCommand}" VerticalAlignment="Bottom" Margin="5,0,0,0" Padding="10,2"></Button>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="{Binding MyScenarios.SelectedScenario.PerformanceIndicator10.HeaderText,  UpdateSourceTrigger=PropertyChanged}" Padding="4,8" Style="{StaticResource FlatTabStyle}" Visibility="{Binding MyScenarios.SelectedScenario.PerformanceIndicator10.TabVisibility, Converter={StaticResource booleanToVisibilityConverter}}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="25"></RowDefinition>
+                        <RowDefinition Height="300*"></RowDefinition>
+                        <RowDefinition Height="25"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="3*"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="5"/>
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+                        <Button Grid.Column="1" Content="Add Row" Margin="0,0,0,2" Command="{Binding AddDataDetailCommand}"/>
+                        <Button Grid.Column="3" Content="Delete Row" Margin="0,0,0,2" Command="{Binding RemoveDataDetailCommand}"/>
+                    </Grid>
+                    <DataGrid CanUserSortColumns="False" Grid.Row="1" ItemsSource="{Binding MyScenarios.SelectedScenario.PerformanceIndicator10.DataSet}" AutoGenerateColumns="False" SelectedIndex="{Binding MyScenarios.SelectedScenario.PerformanceIndicator10.SelectedRowIndex}" SelectionMode="Single">
+                        <DataGrid.RowHeaderStyle>
+                            <Style TargetType="{x:Type DataGridRowHeader}">
+                                <Setter Property="Content" Value="{Binding Path=Index}" />
+                            </Style>
+                        </DataGrid.RowHeaderStyle>
+                        <DataGrid.Columns>
+                            <!--User cant edit these values...only calculatable via commands-->
+                            <DataGridTextColumn Header="A" Binding="{Binding Path=Column1}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column1Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="B" Binding="{Binding Path=Column2}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column2Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="D" Binding="{Binding Path=Column3}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column3Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="E" Binding="{Binding Path=Column4}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column4Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="F" Binding="{Binding Path=Column5}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column5Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="G" Binding="{Binding Path=Column6}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column6Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="H" Binding="{Binding Path=Column7}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column7Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="I" Binding="{Binding Path=Column8}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column8Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="J" Binding="{Binding Path=Column9}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column9Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="K" Binding="{Binding Path=Column10}" IsReadOnly="False" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column10Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Grid Grid.Column="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" Content="Paste All" Command="{Binding PasteAllCommand}" VerticalAlignment="Bottom" Margin="5,0,0,0" Padding="10,2"></Button>
+                            <Button Grid.Column="1" Content="Copy All" Command="{Binding CopyAllCommand}" VerticalAlignment="Bottom" Margin="5,0,0,0" Padding="10,2"></Button>
+                        </Grid>
+                        <Grid Grid.Column="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" Content="Paste Row" Command="{Binding PasteCommand}" VerticalAlignment="Bottom" Margin="5,0,0,0" Padding="10,2"></Button>
+                            <Button Grid.Column="1" Content="Copy Row" Command="{Binding CopyCommand}" VerticalAlignment="Bottom" Margin="5,0,0,0" Padding="10,2"></Button>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="{Binding MyScenarios.SelectedScenario.YieldTab.HeaderText}" Padding="4,8" Style="{StaticResource FlatTabStyle}" Visibility="{Binding MyScenarios.SelectedScenario.YieldTab.TabVisibility, Converter={StaticResource booleanToVisibilityConverter}}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="25"></RowDefinition>
+                        <RowDefinition Height="300*"></RowDefinition>
+                        <RowDefinition Height="25"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="1.5*"/>
+                        </Grid.ColumnDefinitions>
+                        <Button Grid.Column="0" Content="{Binding MyScenarios.SelectedScenario.YieldTab.Visualize, Converter={StaticResource visualizeButtonTextConverter}}" Margin="2,0,2,2" Command="{Binding VisualizeCommand}" Padding="10,2"/>
+                    </Grid>
+                    <DataGrid CanUserSortColumns="False" Grid.Row="1" ItemsSource="{Binding MyScenarios.SelectedScenario.YieldTab.DataSet}" AutoGenerateColumns="False" SelectedIndex="{Binding MyScenarios.SelectedScenario.YieldTab.SelectedRowIndex}" SelectionMode="Single">
+                        <DataGrid.RowHeaderStyle>
+                            <Style TargetType="{x:Type DataGridRowHeader}">
+                                <Setter Property="Content" Value="{Binding Path=Index}" />
+                            </Style>
+                        </DataGrid.RowHeaderStyle>
+                        <DataGrid.Columns>
+                            <!--User cant edit these values...only calculatable via commands-->
+                            <DataGridTextColumn Header="A" Binding="{Binding Path=Column1, Converter={StaticResource columnValueFormatConverter}}" IsReadOnly="True" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column1Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="B" Binding="{Binding Path=Column2, Converter={StaticResource columnValueFormatConverter}}" IsReadOnly="True" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column2Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="D" Binding="{Binding Path=Column3, Converter={StaticResource columnValueFormatConverter}}" IsReadOnly="True" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column3Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="E" Binding="{Binding Path=Column4, Converter={StaticResource columnValueFormatConverter}}" IsReadOnly="True" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column4Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="F" Binding="{Binding Path=Column5, Converter={StaticResource columnValueFormatConverter}}" IsReadOnly="True" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column5Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="G" Binding="{Binding Path=Column6, Converter={StaticResource columnValueFormatConverter}}" IsReadOnly="True" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column6Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="H" Binding="{Binding Path=Column7, Converter={StaticResource columnValueFormatConverter}}" IsReadOnly="True" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column7Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="I" Binding="{Binding Path=Column8, Converter={StaticResource columnValueFormatConverter}}" IsReadOnly="True" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column8Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="J" Binding="{Binding Path=Column9, Converter={StaticResource columnValueFormatConverter}}" IsReadOnly="True" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column9Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="K" Binding="{Binding Path=Column10, Converter={StaticResource columnValueFormatConverter}}" IsReadOnly="True" MinWidth="20" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource foreGroundTextColorConverter}">
+                                                    <Binding Path="Parent.Visualize" />
+                                                    <Binding Path="Column10Color" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*"></ColumnDefinition>
+                            <ColumnDefinition Width="1.5*"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Grid Grid.Column="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" Content="{Binding Path=MyScenarios.SelectedScenario.YieldTab.HeaderText, Converter={StaticResource showActualToggleTextConverter}}" Command="{Binding ToggleEfficiencyCommand}" VerticalAlignment="Bottom" Margin="5,0,0,0" Padding="10,2"></Button>
+                        </Grid>
+                        <Grid Grid.Column="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" Content="Copy Row" Command="{Binding CopyCommand}" VerticalAlignment="Bottom" Margin="5,0,0,0" Padding="10,2"></Button>
+                            <Button Grid.Column="1" Content="Copy All" Command="{Binding CopyAllCommand}" VerticalAlignment="Bottom" Margin="5,0,0,0" Padding="10,2"></Button>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </TabItem>
+        </TabControl>  
+    </Grid>
+</UserControl>

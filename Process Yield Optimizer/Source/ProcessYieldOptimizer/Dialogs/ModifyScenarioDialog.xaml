@@ -1,0 +1,65 @@
+﻿<Window x:Class="ProcessYieldOptimizer.Dialogs.ModifyScenarioDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:converters="clr-namespace:ProcessYieldOptimizer.Converters"
+        Title="Modify Scenario" Height="400" Width="300">
+    <Window.Resources>
+        <ResourceDictionary>
+            <converters:ScenarioListViewWidthConverter x:Key="scenarioListViewWidthConverter" />
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Assets/Shapes.xaml" />
+                <ResourceDictionary Source="../Assets/ButtonStyles.xaml" />
+                <ResourceDictionary Source="../Assets/GridColumnHeaderStyles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Label Grid.Row="0" Grid.Column="0" Content="Scenario Name:" BorderBrush="Black" Background="LightGray" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Center" />
+        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding ViewModelFormatter.ScenarioName, Mode=OneWay}"  TextChanged="ScenarioBoxInput_Changed" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"></TextBox>
+        <Label Grid.Row="1" Grid.Column="0" Content="Base Comparison:" BorderBrush="Black" Background="LightGray" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
+        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding ViewModelFormatter.MainTabName, Mode=OneWay}" TextChanged="MainTextBoxInput_Changed" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"></TextBox>
+        <Grid Grid.Row="2" Grid.RowSpan="8" Grid.ColumnSpan="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="25"></RowDefinition>
+                <RowDefinition></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0" Background="LightGray">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="5"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0" Content="Performance Indicators: " BorderBrush="Black" Background="LightGray" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Center"/>
+                <Button Grid.Column="1" Content="{StaticResource Shape+}"  Style="{StaticResource IconButtonStyle}" Command="{Binding DialogAddPICommand}"/>
+                <Button Grid.Column="3" Content="{StaticResource ShapeX}" Style="{StaticResource IconButtonStyle}" Command="{Binding DialogRemovePICommand}"/>
+            </Grid>
+            <DataGrid Grid.Row="1" AutoGenerateColumns="False" ItemsSource="{Binding ViewModelFormatter.PerformanceIndicators}" SelectionMode="Single" SelectedItem="{Binding ViewModelFormatter.SelectedPerformanceIndicator}">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Index" Binding="{Binding Path=Index}" IsReadOnly="True" MinWidth="20" Width="*"/>
+                    <DataGridTextColumn Header="Performance Indicators" Binding="{Binding Path=Name}" IsReadOnly="False" MinWidth="20" Width="5*"/>
+                    <DataGridTextColumn Header="Rows" Binding="{Binding Path=Rows}" IsReadOnly="False" MinWidth="20" Width="*"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+        <Button Grid.Row="11" Grid.Column="0" Content="Modify" Margin="5" Command="{Binding DialogModifyScenarioCommand}" Click="ModifyClickEvent_Click"/>
+        <Button Grid.Row="11" Grid.Column="1" Content="Cancel" Margin="5" IsCancel="True"/>
+    </Grid>
+</Window>
